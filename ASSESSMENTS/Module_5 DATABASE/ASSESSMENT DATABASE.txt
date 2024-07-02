@@ -1,0 +1,149 @@
+ASSESSMENT
+● Write SQL query to solve the problem given below Here we are talking about the Bank related information of a person. 
+For which you need to  create three tables named as Bank, Account holder and Loan table. 
+
+Create Bank, Account holder and Loan table.
+->mysql> create table Bank (branch_id int primary key,branch_name varchar(255), branch_city varchar(255));
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> create table Account_Holder (account_holder_id int primary key,account_no varchar(255),account_holder_name varchar(255),city varchar(255),contact varchar(255),date_account_created date,account_status varchar(50),account_type varchar(50),balance decimal(10, 2));
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> create table Loan (loan_no int primary key,branch_id int,account_holder_id int,loan_amount decimal(10, 2),loan_type varchar(50),foreign key(branch_id) references Bank(branch_id),foreign key(account_holder_id) references Account_Holder(account_holder_id));
+Query OK, 0 rows affected (3.46 sec)
+
+Describe all tables.
+->mysql> describe bank;
++-------------+--------------+------+-----+---------+-------+
+| Field       | Type         | Null | Key | Default | Extra |
++-------------+--------------+------+-----+---------+-------+
+| branch_id   | int          | NO   | PRI | NULL    |       |
+| branch_name | varchar(255) | YES  |     | NULL    |       |
+| branch_city | varchar(255) | YES  |     | NULL    |       |
++-------------+--------------+------+-----+---------+-------+
+->mysql> describe account_holder;
++----------------------+---------------+------+-----+---------+-------+
+| Field                | Type          | Null | Key | Default | Extra |
++----------------------+---------------+------+-----+---------+-------+
+| account_holder_id    | int           | NO   | PRI | NULL    |       |
+| account_no           | varchar(255)  | YES  |     | NULL    |       |
+| account_holder_name  | varchar(255)  | YES  |     | NULL    |       |
+| city                 | varchar(255)  | YES  |     | NULL    |       |
+| contact              | varchar(255)  | YES  |     | NULL    |       |
+| date_account_created | date          | YES  |     | NULL    |       |
+| account_status       | varchar(50)   | YES  |     | NULL    |       |
+| account_type         | varchar(50)   | YES  |     | NULL    |       |
+| balance              | decimal(10,2) | YES  |     | NULL    |       |
++----------------------+---------------+------+-----+---------+-------+
+->mysql> describe loan;
++-------------------+---------------+------+-----+---------+-------+
+| Field             | Type          | Null | Key | Default | Extra |
++-------------------+---------------+------+-----+---------+-------+
+| loan_no           | int           | NO   | PRI | NULL    |       |
+| branch_id         | int           | YES  | MUL | NULL    |       |
+| account_holder_id | int           | YES  | MUL | NULL    |       |
+| loan_amount       | decimal(10,2) | YES  |     | NULL    |       |
+| loan_type         | varchar(50)   | YES  |     | NULL    |       |
++-------------------+---------------+------+-----+---------+-------+
+
+Insert values in the tables.
+->mysql> insert into Bank values(1, 'Main Branch', 'Rajkot'),(2, 'West Branch', 'Vadodara'),(3, 'South Branch', 'Surat');
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+->mysql> insert into Account_Holder values(1, 'A001', 'Yogu Rajput', 'Rajkot', '1234567890', '2024-07-01', 'active', 'savings', 500.00),(2, 'A002', 'Muaaz Kazi', 'Rajkot', '0987654321', '2024-06-20', 'active', 'savings', 600.00),(3, 'A003', 'Dharmin Tandel', 'Vadodara', '1122334455', '2024-07-16', 'active', 'current', 1000.00),(4, 'A004', 'Yogesh Girase', 'Surat', '5566778899', '2024-07-17', 'terminated', 'savings', 300.00);
+Query OK, 4 rows affected (0.00 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+->mysql> insert into Loan values(1, 1, 1, 5000.00, 'home'),(2, 2, 3, 3000.00, 'car'),(3, 3, 4, 7000.00, 'personal');
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select * from bank;
++-----------+--------------+-------------+
+| branch_id | branch_name  | branch_city |
++-----------+--------------+-------------+
+|         1 | Main Branch  | Rajkot      |
+|         2 | West Branch  | Vadodara    |
+|         3 | South Branch | Surat       |
++-----------+--------------+-------------+
+
+->mysql> select * from account_holder;
++-------------------+------------+---------------------+----------+------------+----------------------+----------------+--------------+---------+
+| account_holder_id | account_no | account_holder_name | city     | contact    | date_account_created | account_status | account_type | balance |
++-------------------+------------+---------------------+----------+------------+----------------------+----------------+--------------+---------+
+|                 1 | A001       | Yogu Rajput         | Rajkot   | 1234567890 | 2024-07-01           | active         | savings      |  500.00 |
+|                 2 | A002       | Muaaz Kazi          | Rajkot   | 0987654321 | 2024-06-20           | active         | savings      |  600.00 |
+|                 3 | A003       | Dharmin Tandel      | Vadodara | 1122334455 | 2024-07-16           | active         | current      | 1000.00 |
+|                 4 | A004       | Yogesh Girase       | Surat    | 5566778899 | 2024-07-17           | terminated     | savings      |  300.00 |
++-------------------+------------+---------------------+----------+------------+----------------------+----------------+--------------+---------+
+
+->mysql> select * from loan;
++---------+-----------+-------------------+-------------+-----------+
+| loan_no | branch_id | account_holder_id | loan_amount | loan_type |
++---------+-----------+-------------------+-------------+-----------+
+|       1 |         1 |                 1 |     5000.00 | home      |
+|       2 |         2 |                 3 |     3000.00 | car       |
+|       3 |         3 |                 4 |     7000.00 | personal  |
++---------+-----------+-------------------+-------------+-----------+
+
+Q.1 For Perform Intra-bank Transfer:-
+->For Debit account
+mysql> update Account_Holder set balance = balance - 100 where account_no = 'A001';
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+For credit account
+mysql> update Account_Holder set balance = balance + 100 where account_no = 'A002';
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from account_holder;
++-------------------+------------+---------------------+----------+------------+----------------------+----------------+--------------+---------+
+| account_holder_id | account_no | account_holder_name | city     | contact    | date_account_created | account_status | account_type | balance |
++-------------------+------------+---------------------+----------+------------+----------------------+----------------+--------------+---------+
+|                 1 | A001       | Yogu Rajput         | Rajkot   | 1234567890 | 2024-07-01           | active         | savings      |  400.00 |
+|                 2 | A002       | Muaaz Kazi          | Rajkot   | 0987654321 | 2024-06-20           | active         | savings      |  700.00 |
+|                 3 | A003       | Dharmin Tandel      | Vadodara | 1122334455 | 2024-07-16           | active         | current      | 1000.00 |
+|                 4 | A004       | Yogesh Girase       | Surat    | 5566778899 | 2024-07-17           | terminated     | savings      |  300.00 |
++-------------------+------------+---------------------+----------+------------+----------------------+----------------+--------------+---------+
+
+Q.2 Also fetch the details of the account holder who are related from the same city  
+->mysql> select * from Account_Holder A1 where exists (select 1 from Account_Holder A2 where A1.city = A2.city and A1.account_holder_id != A2.account_holder_id);
++-------------------+------------+---------------------+--------+------------+----------------------+----------------+--------------+---------+
+| account_holder_id | account_no | account_holder_name | city   | contact    | date_account_created | account_status | account_type | balance |
++-------------------+------------+---------------------+--------+------------+----------------------+----------------+--------------+---------+
+|                 1 | A001       | Yogu Rajput         | Rajkot | 1234567890 | 2024-07-01           | active         | savings      |  400.00 |
+|                 2 | A002       | Muaaz Kazi          | Rajkot | 0987654321 | 2024-06-20           | active         | savings      |  700.00 |
++-------------------+------------+---------------------+--------+------------+----------------------+----------------+--------------+---------+
+
+Q.3 Write a query to fetch account number and account holder name, whose accounts were created after 15th of any month 
+->mysql> select account_no, account_holder_name from Account_Holder where DAY(date_account_created) > 15;
++------------+---------------------+
+| account_no | account_holder_name |
++------------+---------------------+
+| A002       | Muaaz Kazi          |
+| A003       | Dharmin Tandel      |
+| A004       | Yogesh Girase       |
++------------+---------------------+
+
+Q.4 Write a query to display the city name and count the branches in that city. Give the count of branches an alias name of Count_Branch. 
+->mysql> select branch_city as City, count(branch_id) as Count_Branch from Bank group by branch_city;
++----------+--------------+
+| City     | Count_Branch |
++----------+--------------+
+| Rajkot   |            1 |
+| Vadodara |            1 |
+| Surat    |            1 |
++----------+--------------+
+
+Q.5 Write a query to display the account holder’s id, account holder’s name, branch id, and loan amount for people who have taken loans. (NOTE : use sql  join concept to solve the query) 
+->mysql> select AH.account_holder_id, AH.account_holder_name, L.branch_id, L.loan_amount from Account_Holder AH join Loan L on AH.account_holder_id = L.account_holder_id;
++-------------------+---------------------+-----------+-------------+
+| account_holder_id | account_holder_name | branch_id | loan_amount |
++-------------------+---------------------+-----------+-------------+
+|                 1 | Yogu Rajput         |         1 |     5000.00 |
+|                 3 | Dharmin Tandel      |         2 |     3000.00 |
+|                 4 | Yogesh Girase       |         3 |     7000.00 |
++-------------------+---------------------+-----------+-------------+
+
